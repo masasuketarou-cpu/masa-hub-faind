@@ -2,6 +2,7 @@ local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
 local plr = Players.LocalPlayer
 local plrGui = plr:WaitForChild("PlayerGui")
 
@@ -191,14 +192,53 @@ local function disableAntiBee()
 	moveVector = Vector3.zero
 end
 
+-- スプラッシュスクリーン（起動時の画面全体表示）
+local function showSplash()
+	local splashGui = Instance.new("ScreenGui")
+	splashGui.Name = "SplashScreen"
+	splashGui.ResetOnSpawn = false
+	splashGui.Parent = plrGui
+	
+	local splashFrame = Instance.new("Frame")
+	splashFrame.Size = UDim2.new(1, 0, 1, 0)
+	splashFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	splashFrame.BackgroundTransparency = 0
+	splashFrame.BorderSizePixel = 0
+	splashFrame.Parent = splashGui
+	
+	local splashText = Instance.new("TextLabel")
+	splashText.Size = UDim2.new(1, 0, 1, 0)
+	splashText.BackgroundTransparency = 1
+	splashText.Text = "masa hub"
+	splashText.TextColor3 = Color3.fromRGB(255, 50, 50)
+	splashText.TextScaled = true
+	splashText.Font = Enum.Font.GothamBold
+	splashText.TextStrokeTransparency = 0
+	splashText.TextStrokeColor3 = Color3.fromRGB(100, 0, 0)
+	splashText.Parent = splashFrame
+	
+	-- フェードアウトアニメーション
+	task.wait(1.5)
+	
+	local fadeOut = TweenService:Create(splashFrame, 
+		TweenInfo.new(0.8, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),
+		{BackgroundTransparency = 1}
+	)
+	
+	fadeOut:Play()
+	fadeOut.Completed:Connect(function()
+		splashGui:Destroy()
+	end)
+end
+
 -- GUI作成
 local screenThing = Instance.new("ScreenGui")
-screenThing.Name = "AntiBeeGui"
+screenThing.Name = "masa_hub_Gui"
 screenThing.ResetOnSpawn = false
 screenThing.Parent = plrGui
 
 for _,kid in pairs(plrGui:GetChildren()) do
-    if kid.Name == "AntiBeeGui" and kid ~= screenThing then
+    if kid.Name == "masa_hub_Gui" and kid ~= screenThing then
         kid:Destroy()
     end
 end
@@ -235,7 +275,7 @@ local titleText = Instance.new("TextLabel")
 titleText.Size = UDim2.new(1, 0, 1, 0)
 titleText.Position = UDim2.new(0, 10, 0, 0)
 titleText.BackgroundTransparency = 1
-titleText.Text = "Anti Bee"
+titleText.Text = "masa hub"
 titleText.TextColor3 = Color3.fromRGB(255, 60, 60)
 titleText.TextSize = 12
 titleText.Font = Enum.Font.GothamBold
@@ -323,3 +363,6 @@ screenThing.AncestryChanged:Connect(function()
         disableAntiBee()
     end
 end)
+
+-- スプラッシュ画面を表示
+showSplash()
